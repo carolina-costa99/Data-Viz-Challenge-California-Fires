@@ -1,0 +1,2 @@
+"0","platforms <- platforms%>%"
+"0","  mutate(rotten_tomatoes = as.numeric(str_remove_all(platforms$rotten_tomatoes, ""/100"")))"

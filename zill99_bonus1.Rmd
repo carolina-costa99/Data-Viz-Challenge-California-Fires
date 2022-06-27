@@ -1,0 +1,66 @@
+---
+title: "Challenge Story: California Wildfires Plot 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r global_options, include=TRUE}
+library(knitr)
+opts_chunk$set(warning = FALSE, message = FALSE, 
+               comment = FALSE)
+```
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+library(scales)
+```
+
+```{r}
+cali_fire <- read_csv("cali_fire.csv") %>% 
+  #convert to date
+  mutate(Started = mdy_hm(Started))
+```
+# Data wrangling 
+```{r}
+month_cali_fire <- cali_fire%>%
+  mutate(month = month(Started, label = TRUE, abbr =FALSE))%>%
+  mutate(year = year(Started))%>%
+  filter(year > 2012)%>%
+  group_by(month, year)%>%
+  summarise(total_acres_burned = sum(AcresBurned))%>%
+  mutate_all(~replace(., is.na(.), 0))
+```
+# Barplot of acres burned
+
+```{r fig.height= 4, fig.width= 6}
+stack_plot <- ggplot(month_cali_fire, aes(x =month, y = total_acres_burned, fill= as.factor(year)))+ 
+  geom_bar(position="stack", stat="identity", colour="black")+ 
+  labs(title = "Total Acres Burned by California Wildfires (2013-2019)",
+       y = "Total Acres Burned",
+       x = NULL,
+       caption = "source: Kaggle")+
+  scale_fill_brewer(palette = "YlOrRd")+
+  scale_y_continuous(labels = scales::label_comma(),
+                     limits=c(0, 2000000),
+                     expand = c(0,0))+
+  theme_bw()+
+  theme(plot.title = element_text(face = "bold"),
+        plot.background = element_rect(colour = "black", fill="grey", size=2),
+        legend.box.background = element_rect(color = "black", size=1),
+        legend.position = c(1, 1), 
+        legend.justification = c(1, 1),
+        legend.title = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust = 0.6))
+
+stack_plot
+```
+
+```{r}
+ggsave("stack_plot.png", plot = stack_plot, height =4, width = 6)
+```
+

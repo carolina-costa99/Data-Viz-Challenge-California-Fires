@@ -1,0 +1,18 @@
+"0","library(ggplot2)"
+"0","library(ggthemes)"
+"0","library(tidyverse)"
+"0","library(lubridate)"
+"0","library(scales)"
+"0",""
+"0","cali_fire <- read_csv(""cali_fire.csv"") %>% "
+"0","  #convert to date"
+"0","  mutate(Started = mdy_hm(Started))"
+"2","[1mRows: [22m[34m1442[39m [1mColumns: [22m[34m40[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m───────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (15): AdminUnit, CanonicalUrl, ConditionStatement, ControlState...
+[32mdbl[39m (17): AcresBurned, AirTankers, ArchiveYear, CrewsInvolved, Doze...
+[33mlgl[39m  (8): Active, CalFireIncident, Featured, Final, FuelType, Major..."
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."

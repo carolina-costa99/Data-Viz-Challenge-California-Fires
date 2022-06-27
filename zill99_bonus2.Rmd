@@ -1,0 +1,78 @@
+---
+title: "Challenge Story: California Wildfires Plot 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r global_options, include=TRUE}
+library(knitr)
+opts_chunk$set(warning = FALSE, message = FALSE, 
+               comment = FALSE)
+```
+
+```{r}
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(lubridate)
+library(scales)
+
+cali_fire <- read_csv("cali_fire.csv") %>% 
+  #convert to date
+  mutate(Started = mdy_hm(Started))
+```
+
+# Data wrangling 
+```{r}
+year_cali_fire <- cali_fire %>%
+  group_by(MajorIncident,ArchiveYear) %>%
+  summarise(total_fires = n_distinct(Started))
+
+year_cali_fire <- data.frame(year_cali_fire)
+
+year_cali_fire$total_fires[year_cali_fire$MajorIncident == TRUE] <- (year_cali_fire$total_fires[year_cali_fire$MajorIncident == TRUE])*-1
+
+year_cali_fire <-year_cali_fire %>% 
+  mutate(MajorIncident = ifelse(MajorIncident == TRUE, "Major", "Minor"))
+  
+
+```
+
+# Lollipop plot of wildfire counts
+
+```{r}
+lolipop_plot <- ggplot(year_cali_fire, aes(x=total_fires, y=ArchiveYear, color = MajorIncident)) +
+  geom_segment(aes(x = 0, y = ArchiveYear, xend = total_fires, yend = ArchiveYear, color = MajorIncident)) +
+  geom_point(aes(color = MajorIncident),size = 3) +
+  geom_point(aes(color = MajorIncident),size = 3) +
+  scale_y_continuous(breaks = seq(2013,2019,1)) +
+  scale_x_continuous(breaks = seq(-100,350,50),
+                     labels = c(100,50,0,50,100,150,200,250,300,350)) +
+  scale_color_manual(values=c("red", "orange"))+
+  geom_vline(xintercept = 0)+
+  labs(title = "Total Number of Major and Minor \nWildfires Each Year",
+       y = "Year",
+       x = "Count of Wild Fires",
+       caption = "source: Kaggle") +
+  theme_calc() +
+  theme(legend.position = "top",
+        legend.justification = "left",
+        legend.direction = "horizontal",
+        legend.title = element_blank(),
+        legend.background = element_blank(),
+        plot.title = element_text(face = "bold"),
+        plot.background = element_rect(colour = "black", size=2),
+        panel.grid.major.y = element_line(color = "grey"))
+
+lolipop_plot    
+```
+
+
+```{r}
+ggsave("loli_plot.png", plot = lolipop_plot, height =4, width = 6)
+```
+
+

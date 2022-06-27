@@ -1,0 +1,93 @@
+---
+title: "Challenge Story: California Wildfires Plot 3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r global_options, include=TRUE}
+library(knitr)
+opts_chunk$set(warning = FALSE, message = FALSE, 
+               comment = FALSE)
+```
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+library(scales)
+library(maps)
+library(raster)
+library(sf)
+library(tigris)
+library(viridis)
+library(statebins)
+library(ggrepel)
+library(rgdal)
+
+cali_fire <- read_csv("cali_fire.csv") %>% 
+  #convert to date
+  mutate(Started = mdy_hm(Started))
+```
+## Data Rangling 
+```{r}
+CA <- counties("CA", cb =TRUE , progress_bar = FALSE)
+# 
+# loc_fires <- merge(CA,
+#                   cali_fire,
+#                   by.x = "NAME",
+#                   by.y = "Counties")
+
+loc_fires <- cali_fire %>%
+  group_by(MajorIncident,ArchiveYear) %>%
+  summarise(total_fires = n_distinct(Started))
+
+city <- c("Los Angeles","San Diego","San Jose")
+x <- c(-118.244, -117.165,-121.895)
+y <- c(34.052, 32.716, 37.339)
+city_loc <- data.frame(city, x ,y)
+```
+
+#Heatmap of California wildfires
+```{r}
+
+map_plot <- ggplot()+
+#  geom_density_2d_filled(aes(x = city_loc$x , y = city_loc$y))+#contour_var = "density") +
+  stat_density2d(data = cali_fire,
+                 aes(x = Longitude,
+                     y = Latitude,
+                     fill=..level..),
+                 contour_var = "count",
+                 show.legend = FALSE,
+                 geom="polygon")+
+   scale_fill_distiller(palette = "YlOrRd", direction=1)+
+  geom_text_repel(data = city_loc,
+                   aes(x= x, 
+                       y= y, 
+                       label = city),
+                   box.padding = 0.6,
+                   vjust = "bottom",
+                   min.segment.length = 0,
+                   segment.colour = 'black',
+                   seed = 9876) +
+  geom_sf(data = CA, fill = NA) +
+  geom_point(data = city_loc, 
+             aes(x= x, y= y),
+             fill = "black", 
+             size = 3) +
+  labs(title = "Heatmap of California Wildfires (2013-2019)",
+       x = NULL, 
+       y = NULL, 
+       caption = "Source: Kaggle") +
+  theme_classic()+
+  theme(plot.title = element_text(face ="bold"))
+
+map_plot
+```
+```{r}
+ggsave("map_plot.png", plot = map_plot, height =4, width = 6)
+```
+
+

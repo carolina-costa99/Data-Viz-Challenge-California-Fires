@@ -55,7 +55,7 @@ This project aims to viszualize the fires in the area and help both the resident
 Wildfire season has become longer based on conditions that allow fires to start and to burn—winter snows are melting earlier and rain is coming later in the fall. What was once a four-month fire season now lasts six to eight months. For example, figure \@ref(fig:plot-stack) shows fires in recent years have burned well outside of the typical fire season throughout California. Fires in the winter months are becoming part of the norm.
 
 ```{r plot-stack, fig.cap= "Plot of total acres burned by California Wildfires in 2013-2019 by month.", fig.align = "center"}
-knitr::include_graphics("stack_plot.png")
+knitr::include_graphics("docs/stack_plot.png")
 ```
 <br>
 <br>
@@ -73,7 +73,7 @@ According to figure \@ref(fig:plot-loli), there is a clear trend where from 2017
 
 
 ```{r plot-loli, fig.cap= "Plot of total number major and minor wildfires in California between 2013-2019.", fig.align = "center"}
-knitr::include_graphics("loli_plot.png")
+knitr::include_graphics("docs/loli_plot.png")
 ```
 
 
@@ -82,7 +82,7 @@ knitr::include_graphics("loli_plot.png")
 Although fires occur across California, Figure \@ref(fig:plot-map) below shows that San Jose, Los Angles, San Diego were the most common locations for fires in 2013-2019. It must a priority for the Forest Service to work with state and local agencies in mutual aid and to reduce risk to these areas. 
 
 ```{r plot-map, fig.cap= "Heatmap showing areaes with higher frequence of wildfires in California between 2013-2019.", fig.align = "center"}
-knitr::include_graphics("map_plot.png")
+knitr::include_graphics("docs/map_plot.png")
 ```
 
 <br>
